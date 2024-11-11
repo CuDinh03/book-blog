@@ -23,17 +23,6 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=dev
 
-  # Gateway Service: Cổng API gateway để chuyển tiếp các yêu cầu
-  gateway-service:
-    build:
-      context: ./gateway-service  # Đường dẫn tới thư mục chứa Dockerfile của gateway-service
-    ports:
-      - "8083:8080"  # Ánh xạ cổng 8080 trong container ra cổng 8083 trên máy chủ
-    networks:
-      - app-network
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-
   # MySQL Database: Cơ sở dữ liệu MySQL để lưu trữ thông tin sách và người dùng
   mysql-db:
     image: mysql:9.0  # Sử dụng image MySQL phiên bản 9.0
@@ -43,7 +32,7 @@ services:
       MYSQL_USER: root  # Tạo người dùng bookuser
       MYSQL_PASSWORD: Password.1  # Mật khẩu của bookuser
     ports:
-      - "3306:3306"  # Ánh xạ cổng 3306 trong container ra cổng 3306 trên máy chủ
+      - "3305:3306"  # Ánh xạ cổng 3306 trong container ra cổng 3306 trên máy chủ
     networks:
       - app-network
     volumes:

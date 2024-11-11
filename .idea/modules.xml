@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/authen-service/authen-service.iml" filepath="$PROJECT_DIR$/authen-service/authen-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/bookblog.iml" filepath="$PROJECT_DIR$/.idea/bookblog.iml" />
     </modules>
   </component>
