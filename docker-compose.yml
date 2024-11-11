@@ -36,12 +36,12 @@ services:
 
   # MySQL Database: Cơ sở dữ liệu MySQL để lưu trữ thông tin sách và người dùng
   mysql-db:
-    image: mysql:8.0  # Sử dụng image MySQL phiên bản 8.0
+    image: mysql:9.0  # Sử dụng image MySQL phiên bản 9.0
     environment:
-      - MYSQL_ROOT_PASSWORD=rootpassword  # Mật khẩu root cho MySQL
-      - MYSQL_DATABASE=bookblog  # Tạo cơ sở dữ liệu mặc định là bookblog
-      - MYSQL_USER=bookuser  # Tạo người dùng bookuser
-      - MYSQL_PASSWORD=bookpassword  # Mật khẩu của bookuser
+      MYSQL_ROOT_PASSWORD: Password.1  # Mật khẩu root cho MySQL
+      MYSQL_DATABASE: book_blog  # Tạo cơ sở dữ liệu mặc định là bookblog
+      MYSQL_USER: root  # Tạo người dùng bookuser
+      MYSQL_PASSWORD: Password.1  # Mật khẩu của bookuser
     ports:
       - "3306:3306"  # Ánh xạ cổng 3306 trong container ra cổng 3306 trên máy chủ
     networks:
