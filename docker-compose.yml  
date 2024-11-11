@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # Authen Service: Quản lý xác thực người dùng
+  authen-service:
+    build:
+      context: ./authen-service  # Đường dẫn tới thư mục chứa Dockerfile của authen-service
+    ports:
+      - "8081:8080"  # Mở cổng 8080 trong container và ánh xạ vào cổng 8081 trên máy chủ
+    networks:
+      - app-network  # Kết nối vào mạng ứng dụng chung
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev  # Thiết lập profile cho Spring Boot (có thể dùng cho dev, prod,...)
+
+  # Book Service: Quản lý sách
+  book-service:
+    build:
+      context: ./book-service  # Đường dẫn tới thư mục chứa Dockerfile của book-service
+    ports:
+      - "8082:8080"  # Ánh xạ cổng 8080 trong container ra cổng 8082 trên máy chủ
+    networks:
+      - app-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+
+  # Gateway Service: Cổng API gateway để chuyển tiếp các yêu cầu
+  gateway-service:
+    build:
+      context: ./gateway-service  # Đường dẫn tới thư mục chứa Dockerfile của gateway-service
+    ports:
+      - "8083:8080"  # Ánh xạ cổng 8080 trong container ra cổng 8083 trên máy chủ
+    networks:
+      - app-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+
+  # MySQL Database: Cơ sở dữ liệu MySQL để lưu trữ thông tin sách và người dùng
+  mysql-db:
+    image: mysql:8.0  # Sử dụng image MySQL phiên bản 8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword  # Mật khẩu root cho MySQL
+      - MYSQL_DATABASE=bookblog  # Tạo cơ sở dữ liệu mặc định là bookblog
+      - MYSQL_USER=bookuser  # Tạo người dùng bookuser
+      - MYSQL_PASSWORD=bookpassword  # Mật khẩu của bookuser
+    ports:
+      - "3306:3306"  # Ánh xạ cổng 3306 trong container ra cổng 3306 trên máy chủ
+    networks:
+      - app-network
+    volumes:
+      - mysql-data:/var/lib/mysql  # Dữ liệu sẽ được lưu trong volume để bảo toàn giữa các lần khởi động lại container
+
+  # Nginx: Reverse proxy cho Gateway Service (có thể tùy chỉnh cho nhu cầu thực tế)
+  nginx:
+    image: nginx:latest  # Sử dụng image Nginx mới nhất
+    ports:
+      - "80:80"  # Mở cổng 80 cho Nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf  # Cấu hình Nginx từ file nginx.conf bên ngoài
+    depends_on:
+      - gateway-service  # Nginx sẽ khởi động sau khi gateway-service sẵn sàng
+    networks:
+      - app-network
+
+  # Redis (optional): Cung cấp cache cho các dịch vụ (tùy chọn, nếu có sử dụng)
+  redis:
+    image: redis:latest  # Sử dụng Redis image mới nhất
+    ports:
+      - "6379:6379"  # Ánh xạ cổng 6379 cho Redis
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge  # Sử dụng mạng bridge mặc định của Docker để kết nối các container
+
+volumes:
+  mysql-data:
+    driver: local  # Sử dụng volume local để lưu trữ dữ liệu của MySQL
